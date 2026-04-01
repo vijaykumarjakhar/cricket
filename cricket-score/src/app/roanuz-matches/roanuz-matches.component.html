@@ -1,0 +1,239 @@
+<section class="content animated-fade">
+  <header class="page-header">
+    <div class="title-with-status">
+      <h2>Roanuz Featured Matches</h2>
+      <span class="auth-status" [class.active]="authenticated()">
+        {{ authenticated() ? '● API Active' : '○ Pending Auth' }}
+      </span>
+    </div>
+    <button (click)="fetchFeaturedMatches()" [disabled]="loading() || !authenticated()" class="refresh-btn">
+      <span *ngIf="!loading()">Refresh Featured</span>
+      <span *ngIf="loading()" class="spinner"></span>
+    </button>
+  </header>
+
+  <div *ngIf="error()" class="error-box">
+    <p>{{ error() }}</p>
+  </div>
+
+  <!-- Match List -->
+  <div *ngIf="!selectedMatchDetail()">
+    <div *ngIf="!loading() && matches().length === 0 && !error()" class="empty-state">
+      <div class="icon">🏆</div>
+      <h2>No featured matches</h2>
+      <p>Check back later for tournaments and featured games.</p>
+    </div>
+
+    <div class="scoreboard-grid" *ngIf="matches().length > 0">
+      <div class="score-card roanuz" *ngFor="let match of matches()">
+        <div class="card-header">
+          <span class="match-badge">{{ match.status === 'live' ? 'Live' : 'Featured' }}</span>
+          <span class="source-tag">{{ match.format }}</span>
+        </div>
+        <div class="match-info">
+          <h3>{{ match.name }}</h3>
+          <p class="venue">{{ match.venue?.name }}</p>
+          <p class="subtitle">{{ match.sub_title }}</p>
+          <p class="tournament">{{ match.tournament?.name }}</p>
+        </div>
+        <div class="score-display">
+          <div class="status-text">{{ match.status_str }}</div>
+        </div>
+        <div class="card-footer">
+          <button class="view-details-btn" (click)="viewMatchDetail(match.key)">
+            View Match Center
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───────────────────────────────── Cricbuzz-Style Match Center ───────────────────────────────── -->
+  <div *ngIf="selectedMatchDetail()" class="roanuz-detail">
+    <!-- Title bar -->
+    <div class="detail-header">
+      <button class="back-btn" (click)="closeDetail()">← Back</button>
+      <div class="header-info">
+        <span class="tournament-label">{{ selectedMatchDetail().tournament?.name }}</span>
+        <h2>{{ selectedMatchDetail().name }}</h2>
+        <p class="venue-label">📍 {{ selectedMatchDetail().venue?.name }}</p>
+      </div>
+    </div>
+
+    <!-- ── LIVE SCORECARD ─────────────────────────────── -->
+    <ng-container *ngFor="let inningsKey of getInningsKeys()">
+      <ng-container *ngIf="getInnings(inningsKey) as inn">
+        <div class="innings-panel">
+          <!-- Innings header: CSK 127 (19.4) -->
+          <div class="innings-header">
+            <div class="team-score">
+              <span class="team-name">{{ getTeamCode(inn.batting_team) }}</span>
+              <span class="score-big">
+                {{ inn.score?.runs }}/{{ inn.score?.wickets }}
+              </span>
+              <span class="overs">({{ inn.score?.overs?.join('.') }})</span>
+              <span class="crr" *ngIf="inn.score?.run_rate"> CRR: {{ inn.score?.run_rate | number:'1.2-2' }}</span>
+            </div>
+            <div class="innings-status-tag" *ngIf="inn.status">{{ inn.status | titlecase }}</div>
+          </div>
+
+          <!-- Recent balls strip -->
+          <div class="recent-balls-strip" *ngIf="ballByBall()?.over && isCurrentInnings(inningsKey)">
+            <span class="strip-label">Recent:</span>
+            <div class="balls-row">
+              <ng-container *ngFor="let ball of getBallsReversed()">
+                <span class="ball-dot"
+                  [class.wicket]="ball.team_score?.is_wicket"
+                  [class.four]="ball.batsman?.is_four"
+                  [class.six]="ball.batsman?.is_six"
+                  [class.dot]="!ball.team_score?.is_wicket && (ball.team_score?.runs + ball.team_score?.extras) === 0">
+                  {{ ball.team_score?.is_wicket ? 'W' : (ball.batsman?.is_four ? '4' : (ball.batsman?.is_six ? '6' : ((ball.team_score?.runs || 0) + (ball.team_score?.extras || 0)))) }}
+                </span>
+              </ng-container>
+            </div>
+          </div>
+
+          <!-- Two-column layout -->
+          <div class="scorecard-columns">
+            <!-- LEFT: Batting table -->
+            <div class="batting-section">
+              <table class="live-table">
+                <thead>
+                  <tr>
+                    <th class="col-player">Batter</th>
+                    <th>R</th><th>B</th><th>4s</th><th>6s</th><th>SR</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <ng-container *ngFor="let pKey of inn.batting_order">
+                    <ng-container *ngIf="getBattingScore(inningsKey, pKey) as bs">
+                      <tr *ngIf="bs.batting?.status === 'batting' || bs.batting?.status === 'out'" 
+                          [class.active-player]="bs.batting?.status === 'batting'">
+                        <td class="col-player">
+                          {{ getPlayerName(pKey) }}
+                          <span class="batting-indicator" *ngIf="bs.batting?.status === 'batting'"> *</span>
+                          <span class="out-info" *ngIf="bs.batting?.status === 'out'">{{ bs.batting?.how_out }}</span>
+                        </td>
+                        <td>{{ bs.batting?.score?.runs ?? '-' }}</td>
+                        <td>{{ bs.batting?.score?.balls ?? '-' }}</td>
+                        <td>{{ bs.batting?.score?.fours ?? '-' }}</td>
+                        <td>{{ bs.batting?.score?.sixes ?? '-' }}</td>
+                        <td>{{ bs.batting?.score?.strike_rate | number:'1.2-2' }}</td>
+                      </tr>
+                    </ng-container>
+                  </ng-container>
+                </tbody>
+              </table>
+
+              <div class="extras-line" *ngIf="inn.extras as ex">
+                Extras: {{ ex.total || 0 }} (w {{ ex.wides || 0 }}, nb {{ ex.no_balls || 0 }}, lb {{ ex.leg_byes || 0 }}, b {{ ex.byes || 0 }})
+              </div>
+
+              <!-- Bowling table -->
+              <table class="live-table bowling-table">
+                <thead>
+                  <tr>
+                    <th class="col-player">Bowler</th>
+                    <th>O</th><th>M</th><th>R</th><th>W</th><th>ECO</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <ng-container *ngFor="let pKey of inn.bowling_order">
+                    <ng-container *ngIf="getBowlingScore(inningsKey, pKey) as bw">
+                      <tr *ngIf="bw.bowling?.score?.balls > 0"
+                          [class.active-player]="isActiveBowler(pKey)">
+                        <td class="col-player">
+                          {{ getPlayerName(pKey) }}
+                          <span class="batting-indicator" *ngIf="isActiveBowler(pKey)"> *</span>
+                        </td>
+                        <td>{{ formatOvers(bw.bowling?.score?.overs) }}</td>
+                        <td>{{ bw.bowling?.score?.maidens }}</td>
+                        <td>{{ bw.bowling?.score?.runs }}</td>
+                        <td>{{ bw.bowling?.score?.wickets }}</td>
+                        <td>{{ bw.bowling?.score?.economy | number:'1.2-2' }}</td>
+                      </tr>
+                    </ng-container>
+                  </ng-container>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- RIGHT: Key Stats panel -->
+            <div class="key-stats-panel">
+              <div class="key-stats-title">Key Stats</div>
+              <div class="stat-row" *ngIf="selectedMatchDetail().live?.partnership as p">
+                <span class="label">Partnership:</span>
+                <span class="val">{{ p.runs }}({{ p.balls }})</span>
+              </div>
+              <div class="stat-row" *ngIf="selectedMatchDetail().live?.last_wicket as lw">
+                <span class="label">Last Wkt:</span>
+                <span class="val">{{ getPlayerName(lw.player_key) }} {{ lw.runs }}({{ lw.balls }}) – {{ lw.score?.runs }}/{{ lw.score?.wickets + 1 }} in {{ formatOvers(lw.score?.overs) }} ov.</span>
+              </div>
+              <div class="stat-row" *ngIf="inn.last_5_overs as l5">
+                <span class="label">Last 5 overs:</span>
+                <span class="val">{{ l5.runs }} runs, {{ l5.wickets }} wkts</span>
+              </div>
+              <div class="stat-row">
+                <span class="label">Toss:</span>
+                <span class="val">{{ getTossText() }}</span>
+              </div>
+              <div class="stat-row" *ngIf="inn.powerplay as pp">
+                <span class="label">Powerplay:</span>
+                <span class="val">{{ pp.runs }}/{{ pp.wickets }} ({{ pp.overs }} ov)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
+
+    <!-- Over Summaries (compact strip) -->
+    <div class="section-block" *ngIf="overSummary()?.summaries">
+      <div class="section-header">
+        <h3>Over Summaries</h3>
+        <span class="badge">Last {{ overSummary().summaries.length }} Overs</span>
+      </div>
+      <div class="overs-scroll">
+        <div class="over-pill" *ngFor="let over of overSummary().summaries">
+          <span class="label">Ov {{ over?.index?.over_number }}</span>
+          <span class="runs">{{ over?.runs }}</span>
+          <span class="over-wickets" *ngIf="over?.wickets > 0">{{ over?.wickets }}W</span>
+          <div class="over-players">
+            <span>🏏 {{ getPlayerName(over.strikers?.[0]?.player_key) }}</span>
+            <span>⚾ {{ getPlayerName(over.bowlers?.[0]?.player_key) }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ball by Ball Feed -->
+    <div class="section-block" *ngIf="ballByBall()?.over">
+      <div class="section-header">
+        <h3>Ball by Ball</h3>
+        <span class="badge live pulse">LIVE</span>
+      </div>
+      <div class="ball-feed">
+        <div class="ball-row" *ngFor="let ball of ballByBall().over.balls">
+          <span class="over-num">{{ ball?.overs?.[0] }}.{{ ball?.overs?.[1] }}</span>
+          <div class="ball-content">
+            <p class="matchup">
+              <strong>{{ getPlayerName(ball?.bowler?.player_key) }}</strong>
+              <span class="to-word"> to </span>
+              <strong>{{ getPlayerName(ball?.batsman?.player_key) }}</strong>
+            </p>
+            <p class="commentary">{{ ball?.comment }}</p>
+            <p class="ball-display-score" *ngIf="ball?.display_score">
+              <span>Score: {{ ball.display_score }}</span>
+            </p>
+          </div>
+          <div class="ball-circle"
+               [class.w]="ball?.team_score?.is_wicket"
+               [class.four]="ball?.batsman?.is_four"
+               [class.six]="ball?.batsman?.is_six">
+            {{ ball?.team_score?.is_wicket ? 'W' : ((ball?.team_score?.runs || 0) + (ball?.team_score?.extras || 0)) }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

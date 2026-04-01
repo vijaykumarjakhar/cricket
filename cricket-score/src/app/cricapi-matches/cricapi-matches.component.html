@@ -1,0 +1,83 @@
+<section class="content animated-fade">
+  <header class="page-header">
+    <h2>CricAPI Current Matches</h2>
+    <button (click)="fetchCurrentMatches()" [disabled]="loading()" class="refresh-btn">
+      <span *ngIf="!loading()">Refresh Matches</span>
+      <span *ngIf="loading()" class="spinner"></span>
+    </button>
+  </header>
+
+  <div *ngIf="error()" class="error-box">
+    <p>{{ error() }}</p>
+  </div>
+
+  <!-- Match List -->
+  <div *ngIf="!selectedMatchScorecard()">
+    <div *ngIf="!loading() && matches().length === 0 && !error()" class="empty-state">
+      <div class="icon">🏏</div>
+      <h2>No matches found</h2>
+      <p>There are no current matches available at the moment.</p>
+    </div>
+
+    <div class="scoreboard-grid" *ngIf="matches().length > 0">
+      <div class="score-card" *ngFor="let match of matches()">
+        <div class="card-header">
+          <span class="match-badge" [class.live]="match.matchStarted">
+            {{ match.matchStarted ? 'Live' : 'Upcoming' }}
+          </span>
+          <span class="source-tag">{{ match.matchType }}</span>
+        </div>
+        <div class="match-info">
+          <h3>{{ match.name }}</h3>
+          <p class="venue">{{ match.venue }}</p>
+          <p class="date">{{ match.date }}</p>
+        </div>
+        <div class="score-display">
+          <div class="status-text">{{ match.status }}</div>
+        </div>
+        <div class="card-footer">
+          <button class="view-details-btn" (click)="viewScorecard(match.id)">
+            View Full Scorecard
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detailed Scorecard View -->
+  <div *ngIf="selectedMatchScorecard()" class="scorecard-detail-view">
+    <div class="detail-header">
+      <button class="back-btn" (click)="closeScorecard()">← Back to Matches</button>
+      <h2>{{ selectedMatchScorecard().name }}</h2>
+      <p>{{ selectedMatchScorecard().status }}</p>
+    </div>
+
+    <div class="innings-container" *ngFor="let innings of selectedMatchScorecard().scorecard">
+      <h3>{{ innings.inning }}</h3>
+      <div class="table-responsive">
+        <table class="scorecard-table">
+          <thead>
+            <tr>
+              <th>Batter</th>
+              <th>R</th>
+              <th>B</th>
+              <th>4s</th>
+              <th>6s</th>
+              <th>SR</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let batter of innings.batsman">
+              <td>{{ batter.name }}</td>
+              <td>{{ batter.r }}</td>
+              <td>{{ batter.b }}</td>
+              <td>{{ batter['4s'] }}</td>
+              <td>{{ batter['6s'] }}</td>
+              <td>{{ batter.sr }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>

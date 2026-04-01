@@ -1,0 +1,11 @@
+{
+  "/roanuz-api": {
+    "target": "https://api.sports.roanuz.com",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/roanuz-api": ""
+    },
+    "logLevel": "debug"
+  }
+}

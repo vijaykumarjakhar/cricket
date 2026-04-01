@@ -1,0 +1,305 @@
+:host {
+  display: block;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: #e0e0e0;
+  background-color: #0f172a;
+  min-height: 100vh;
+}
+
+.main-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.navbar {
+  background: rgba(30, 41, 59, 0.9);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1rem 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+
+  .nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .logo-section {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    .cricket-ball {
+      width: 32px;
+      height: 32px;
+      background: radial-gradient(circle at 30% 30%, #ef4444, #991b1b);
+      border-radius: 50%;
+      position: relative;
+      &::after {
+        content: '';
+        position: absolute; top: 50%; left: 0; right: 0; height: 1.5px;
+        background: rgba(255, 255, 255, 0.3); transform: translateY(-50%);
+      }
+    }
+
+    h1 {
+      margin: 0; font-size: 1.5rem; font-weight: 800;
+      background: linear-gradient(to right, #60a5fa, #a855f7);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 1.5rem;
+
+    .nav-item {
+      color: #94a3b8;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.9375rem;
+      transition: all 0.2s ease;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+
+      &:hover { color: #f8fafc; background: rgba(255, 255, 255, 0.05); }
+      &.active { color: #3b82f6; background: rgba(59, 130, 246, 0.1); }
+    }
+  }
+}
+
+.router-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Global Component Styles */
+.page-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 2.5rem;
+  h2 { margin: 0; font-size: 1.75rem; color: #f8fafc; }
+
+  .title-with-status {
+    display: flex; align-items: center; gap: 1rem;
+    .auth-status {
+      font-size: 0.75rem; font-weight: 700; padding: 0.25rem 0.5rem; border-radius: 0.375rem;
+      background: rgba(255, 165, 0, 0.1); color: #fbbf24;
+      &.active { background: rgba(34, 197, 94, 0.1); color: #4ade80; }
+    }
+  }
+}
+
+.scoreboard-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 2rem;
+}
+
+.score-card {
+  background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 1rem;
+  padding: 1.5rem; transition: all 0.3s ease;
+  display: flex; flex-direction: column;
+
+  &:hover {
+    transform: translateY(-5px); border-color: rgba(96, 165, 250, 0.5);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+  }
+
+  .card-header {
+    display: flex; justify-content: space-between; margin-bottom: 1.25rem;
+    .match-badge {
+      background: #4b5563; color: white; padding: 0.25rem 0.75rem; border-radius: 1rem;
+      font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+      &.live { background: #dc2626; animation: pulse 2s infinite; }
+    }
+    .source-tag { background: rgba(255, 255, 255, 0.1); color: #94a3b8; padding: 0.2rem 0.4rem; border-radius: 0.3rem; font-size: 0.65rem; }
+  }
+
+  .match-info {
+    flex-grow: 1; margin-bottom: 1rem;
+    h3 { margin: 0 0 0.5rem 0; font-size: 1.2rem; color: #f8fafc; }
+    .venue, .date, .subtitle { font-size: 0.8rem; color: #94a3b8; margin: 0 0 0.2rem 0; }
+  }
+
+  .score-display {
+    background: rgba(15, 23, 42, 0.5); padding: 1rem; border-radius: 0.75rem;
+    text-align: center; margin-bottom: 1.25rem;
+    .status-text { font-size: 0.9rem; color: #60a5fa; font-weight: 600; }
+  }
+
+  .card-footer .view-details-btn {
+    width: 100%; background: transparent; border: 1px solid #3b82f6; color: #60a5fa;
+    padding: 0.6rem; border-radius: 0.4rem; font-weight: 600; cursor: pointer; transition: 0.2s;
+    &:hover { background: #3b82f6; color: white; }
+  }
+}
+
+.roanuz-detail {
+  max-width: 1000px;
+  margin: 0 auto;
+  animation: fadeIn 0.4s ease;
+
+  .detail-header {
+    display: flex; align-items: flex-start; gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 1rem; padding: 1.5rem;
+
+    .back-btn {
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+      color: #94a3b8; cursor: pointer; padding: 0.5rem 1rem; border-radius: 0.5rem;
+      font-weight: 600; white-space: nowrap; transition: 0.2s;
+      &:hover { background: rgba(255,255,255,0.1); color: #fff; }
+    }
+    .header-info {
+      .tournament-label { font-size:0.7rem; color:#60a5fa; font-weight:700; text-transform:uppercase; letter-spacing:1px; }
+      h2 { margin: 0.25rem 0; font-size:1.5rem; color:#fff; }
+      .venue-label { margin:0; font-size:0.85rem; color:#94a3b8; }
+    }
+  }
+
+  .innings-panel {
+    background: #ffffff; border-radius: 0.75rem; margin-bottom: 1.5rem;
+    overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.3); color: #1a1a2e;
+
+    .innings-header {
+      background: #f5f5f5; padding: 0.75rem 1rem;
+      display: flex; justify-content: space-between; align-items: center;
+      border-bottom: 2px solid #e0e0e0;
+      .team-score {
+        display: flex; align-items: baseline; gap: 0.5rem;
+        .team-name { font-size: 1.1rem; font-weight: 800; color: #1a1a2e; }
+        .score-big { font-size: 1.4rem; font-weight: 900; color: #1a1a2e; }
+        .overs { font-size: 0.9rem; color: #555; }
+        .crr { font-size: 0.85rem; color: #555; margin-left: 0.5rem; }
+      }
+      .innings-status-tag { background: #fde68a; color: #78350f; font-size: 0.75rem; font-weight: 800; padding: 0.2rem 0.6rem; border-radius: 0.25rem; }
+    }
+
+    .recent-balls-strip {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.5rem 1rem; background: #fafafa; border-bottom: 1px solid #e0e0e0; font-size: 0.8rem;
+      .strip-label { color: #666; font-weight: 600; }
+      .balls-row {
+        display: flex; gap: 0.4rem;
+        .ball-dot {
+          width: 26px; height: 26px; display: flex; align-items: center; justify-content: center;
+          border-radius: 50%; font-size: 0.7rem; font-weight: 800;
+          background: #e5e7eb; color: #374151; border: 1px solid #d1d5db;
+          &.wicket { background: #dc2626; color: #fff; }
+          &.four   { background: #d97706; color: #fff; }
+          &.six    { background: #7c3aed; color: #fff; }
+          &.dot    { background: #f3f4f6; color: #9ca3af; }
+        }
+      }
+    }
+
+    .scorecard-columns {
+      display: flex;
+      .batting-section { flex: 1 1 65%; border-right: 1px solid #e5e7eb; padding-bottom: 0.5rem; }
+      .key-stats-panel {
+        flex: 0 0 35%; padding: 1rem; background: #fafafa;
+        .key-stats-title {
+          font-size: 0.8rem; font-weight: 800; color: #374151; text-transform: uppercase; letter-spacing: 1px;
+          margin-bottom: 0.75rem; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.5rem;
+        }
+        .stat-row {
+          margin-bottom: 0.6rem;
+          .label { font-size: 0.75rem; font-weight: 700; color: #6b7280; display: block; }
+          .val   { font-size: 0.8rem; color: #111827; line-height: 1.4; }
+        }
+      }
+    }
+
+    .live-table {
+      width: 100%; border-collapse: collapse; font-size: 0.85rem;
+      thead tr { background: #f3f4f6; }
+      th { padding: 0.4rem 0.75rem; text-align: right; font-weight: 700; font-size: 0.75rem; color: #6b7280; white-space: nowrap; &.col-player { text-align: left; } }
+      tbody tr {
+        border-bottom: 1px solid #f3f4f6;
+        &.active-player td { background: #eff6ff; font-weight: 700; color: #1e3a8a; }
+        td { padding: 0.5rem 0.75rem; text-align: right; color: #374151;
+          &.col-player {
+            text-align: left;
+            .batting-indicator { color: #0ea5e9; font-weight: 900; }
+            .out-info { display: block; font-size: 0.7rem; color: #9ca3af; }
+          }
+        }
+      }
+    }
+    .bowling-table { margin-top: 0.25rem; thead tr { background: #fef9c3; } }
+    .extras-line { font-size: 0.78rem; color: #6b7280; padding: 0.3rem 0.75rem; border-top: 1px solid #f3f4f6; border-bottom: 1px solid #f3f4f6; }
+  }
+
+  .section-block {
+    background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 0.75rem; padding: 1.25rem; margin-bottom: 1.5rem;
+
+    .section-header {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;
+      h3 { font-size: 1rem; color: #f8fafc; margin: 0; border-left: 3px solid #3b82f6; padding-left: 0.75rem; }
+      .badge {
+        font-size: 0.65rem; background: rgba(59,130,246,0.15); color: #60a5fa;
+        padding: 0.2rem 0.6rem; border-radius: 2rem; font-weight: 700; border: 1px solid rgba(59,130,246,0.3);
+        &.pulse { background: rgba(220,38,38,0.15); color: #f87171; border-color: rgba(220,38,38,0.3); animation: pulse 2s infinite; }
+      }
+    }
+
+    .overs-scroll {
+      display: flex; gap: 0.75rem; overflow-x: auto; padding-bottom: 0.5rem;
+      &::-webkit-scrollbar { height: 3px; }
+      &::-webkit-scrollbar-thumb { background: rgba(59,130,246,0.3); border-radius: 10px; }
+      .over-pill {
+        flex: 0 0 auto; min-width: 100px;
+        background: rgba(15,23,42,0.5); border: 1px solid rgba(255,255,255,0.08);
+        padding: 0.6rem 0.75rem; border-radius: 0.6rem; text-align: center;
+        .label { font-size: 0.65rem; color: #94a3b8; font-weight: 700; display: block; }
+        .runs  { font-size: 1.1rem; color: #60a5fa; font-weight: 900; display: block; }
+        .over-wickets { font-size: 0.6rem; background: #dc2626; color:#fff; padding: 0.1rem 0.4rem; border-radius: 0.2rem; font-weight: 800; display: inline-block; margin-top: 0.2rem; }
+        .over-players { margin-top: 0.4rem; span { display: block; font-size: 0.62rem; color: #cbd5e1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 95px; } }
+      }
+    }
+
+    .ball-feed {
+      display: flex; flex-direction: column; gap: 0.5rem;
+      .ball-row {
+        display: flex; align-items: center; gap: 1rem;
+        padding: 0.9rem 1rem; background: rgba(15,23,42,0.3); border-radius: 0.6rem; border: 1px solid rgba(255,255,255,0.04);
+        .over-num { font-weight: 800; color: #64748b; font-size: 0.9rem; min-width: 42px; }
+        .ball-content {
+          flex-grow: 1;
+          .matchup { margin: 0; font-size: 0.95rem; color: #f1f5f9; .to-word { color: #64748b; margin: 0 0.3rem; font-size: 0.8rem; } }
+          .commentary { font-size: 0.8rem; color: #94a3b8; margin-top: 0.25rem; line-height: 1.4; }
+          .ball-display-score { margin-top: 0.4rem; font-size: 0.75rem; color: #cbd5e1; font-weight: 600; span { background: rgba(0,0,0,0.2); padding: 0.15rem 0.4rem; border-radius: 0.2rem; } }
+        }
+        .ball-circle {
+          width: 36px; height: 36px; border-radius: 50%;
+          display: flex; align-items: center; justify-content: center;
+          font-weight: 900; font-size: 0.9rem; flex-shrink: 0;
+          background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: #e2e8f0;
+          &.w    { background: #dc2626; color:#fff; border:none; box-shadow: 0 0 10px rgba(220,38,38,0.4); }
+          &.four { background: #d97706; color:#fff; border:none; }
+          &.six  { background: #7c3aed; color:#fff; border:none; box-shadow: 0 0 10px rgba(124,58,237,0.4); }
+        }
+      }
+    }
+  }
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+.animated-fade { animation: fadeIn 0.5s ease-out; }
+.error-box { background: rgba(220, 38, 38, 0.1); color: #fca5a5; padding: 1rem; border-radius: 0.5rem; margin-bottom: 2rem; text-align: center; }
+.empty-state { text-align: center; padding: 4rem; .icon { font-size: 3rem; margin-bottom: 1rem; } h2 { color: #fff; } p { color: #94a3b8; } }
+.spinner { width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: #fff; animation: spin 0.8s linear infinite; }
+
+

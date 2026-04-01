@@ -1,0 +1,18 @@
+<main class="main-layout">
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="logo-section">
+        <div class="cricket-ball"></div>
+        <h1>{{ title() }}</h1>
+      </div>
+      <div class="nav-links">
+        <a routerLink="/cricapi" routerLinkActive="active" class="nav-item">CricAPI</a>
+        <a routerLink="/roanuz" routerLinkActive="active" class="nav-item">Roanuz Sports</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="router-container">
+    <router-outlet></router-outlet>
+  </div>
+</main>
